@@ -1,4 +1,4 @@
-package com.sdproject.membersystem.security.config;
+package com.sdproject.membersystem.registration.security.config;
 
 import com.sdproject.membersystem.member.MemberService;
 import lombok.AllArgsConstructor;
@@ -22,7 +22,7 @@ public class WebSecurityConfig {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                    .antMatchers("/api/member/registration/**")
+                    .antMatchers("/api/**")
                     .permitAll()
                 .anyRequest().authenticated().and().formLogin();
         return http.build();
