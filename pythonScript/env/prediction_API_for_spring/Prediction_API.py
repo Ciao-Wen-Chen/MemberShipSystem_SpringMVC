@@ -1,3 +1,4 @@
+import os
 from keras.models import load_model
 import pickle
 import keras
@@ -5,8 +6,11 @@ import pandas as pd
 import json
 import sys
 
+current = os.path.dirname(os.path.realpath(__file__))
+print(current)
+
 def retrieve_percentages(player_id, srface):
-    df_players = pd.read_csv('Players_Statistics_.csv')
+    df_players = pd.read_csv(current+'/Players_Statistics_.csv')
     df = df_players.loc[df_players['id'] == player_id]
     df = df.reset_index(drop=True)
     victory_percentage = df['victory_percentage'][0]
@@ -26,10 +30,11 @@ def retrieve_percentages(player_id, srface):
 def main(argv):
     # MODEL PARAMETERS
 
-    model_year = 2021
-    model = load_model('prediction_model.h5')
 
-    with open('indicators_dicts_%i' % model_year, 'rb') as file:
+    model_year = 2021
+    model = load_model(current+'/prediction_model.h5')
+
+    with open(current+'/indicators_dicts_%i' % model_year, 'rb') as file:
         my_Unpickler = pickle.Unpickler(file)
         [tournaments_dict, level_dict, surface_dict, extrema_dict] = my_Unpickler.load()
 
@@ -38,6 +43,7 @@ def main(argv):
     # file=open('test_data.json')
     # datas=json.load(file)
     matchLevel=argv[0]
+    # print(matchLevel)
     arg_dict = { "matchLevel":0, "matchName":1, "matchSurface":2, "p1":3,  "p1Age":4,  "p1Fatigue":5,  "p1Hand":6,  "p1Height":7,  "p1Id":8,  "p1Rank":9,  "p1Point":10, "p2":11, "p2Age":12, "p2Fatigue":13, "p2Hand":14, "p2Height":15, "p2Id":16, "p2Rank":17, "p2Point":18 }
 
     # Match
@@ -251,4 +257,4 @@ def main(argv):
     print(name_p2, ':', prediction[0][1]*100, '% Chances of victory')
 
 if __name__ == "__main__":
-   main(sys.avg[1:])
+   main(sys.argv[1:])

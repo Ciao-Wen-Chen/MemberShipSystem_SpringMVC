@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+pythonScript/env/lib/
+pythonScript/env/bin/
+.jython_cache/packages/

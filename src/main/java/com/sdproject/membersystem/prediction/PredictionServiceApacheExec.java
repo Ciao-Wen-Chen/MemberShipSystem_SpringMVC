@@ -3,19 +3,21 @@ package com.sdproject.membersystem.prediction;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.SimpleScriptContext;
 import java.io.File;
-import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.FileReader;
+import java.io.StringWriter;
+import org.python.core.Options;
 
 @Service
 @AllArgsConstructor
-public class PredictionService {
+public class PredictionServiceApacheExec{
+
 
     public String startPredict(PredictedData request) throws Exception{
-
         var matchLevel=String.valueOf(request.getMatchLevel());
         System.out.println(matchLevel);
         var matchName=String.valueOf(request.getMatchName());
@@ -40,26 +42,27 @@ public class PredictionService {
         var p2Rank=String.valueOf(request.getP2Rank());
         var p2Point=String.valueOf(request.getP2Point());
 
-        //System.setProperty("java.library.path", "/path/to/library");
-        ProcessBuilder builder = new ProcessBuilder("/Users/ciao-wenchen/opt/anaconda3/bin/python",
-                System.getProperty("user.dir") + "/pythonScript/env/prediction_API_for_spring/Prediction_API.py",
-                //"../../../python-workspace/prediction_API_for_spring/Prediction_API.py",
-                matchLevel, matchName, matchSurface,
+        StringWriter writer = new StringWriter();
+        ScriptContext context = new SimpleScriptContext();
+        context.setWriter(writer);
+
+        ScriptEngineManager manager = new ScriptEngineManager();
+        Options.importSite = false;
+        ScriptEngine engine = manager.getEngineByName("python");
+        String [] arguments = new String [] {matchLevel, matchName, matchSurface,
                 p1, p1Age, p1Fatigue, p1Hand, p1Height, p1Id, p1Rank, p1Point,
-                p2, p2Age, p2Fatigue, p2Hand, p2Height, p2Id, p2Rank, p2Point );
+                p2, p2Age, p2Fatigue, p2Hand, p2Height, p2Id, p2Rank, p2Point};
 
-        builder.redirectErrorStream(true);
-        Process process = builder.start();
-        process.waitFor();
+        engine.put(ScriptEngine.ARGV, arguments);
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        StringBuilder output = new StringBuilder();
-        String line;
-        while ((line = in.readLine()) != null) {
-            output.append(line);
-            output.append('\n');
-        }
-        return output.toString();
-
+        engine.eval(new FileReader(resolvePythonScriptPath(System.getProperty("user.dir") +
+                "/pythonScript/prediction_API_for_spring/Prediction_API.py")), context);
+        return writer.toString().trim();
     }
+
+    private String resolvePythonScriptPath(String path){
+        File file = new File(path);
+        return file.getAbsolutePath();
+    }
+
 }
