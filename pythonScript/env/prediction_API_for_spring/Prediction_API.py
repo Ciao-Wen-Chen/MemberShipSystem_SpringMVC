@@ -253,8 +253,10 @@ def main(argv):
     print('Prediction: ', prediction)
 
     print('What will be the results?')
-    print(name_p1, ':', prediction[0][0]*100, '% Chances of victory')
-    print(name_p2, ':', prediction[0][1]*100, '% Chances of victory')
+#     print(name_p1, ':', prediction[0][0]*100, '% Chances of victory')
+#     print(name_p2, ':', prediction[0][1]*100, '% Chances of victory')
+    print("/"+name_p1, ':', prediction[0][0]*100, '/')
+    print(name_p2, ':', prediction[0][1]*100)
 
 if __name__ == "__main__":
    main(sys.argv[1:])

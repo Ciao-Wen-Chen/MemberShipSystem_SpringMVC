@@ -19,15 +19,16 @@ public class PredictionController {
     private final PredictionService predictionService;
 
     @PostMapping()
-    public String prediction(@RequestBody PredictedData request){
-        String line="";
+    public ReturnData prediction(@RequestBody PredictedData request){
+//        String line="";
+        ReturnData returnData=new ReturnData(null,null,null,null);
         try{
-            line=predictionService.startPredict(request);
+            returnData=predictionService.startPredict(request);
         } catch (Exception e){
             e.printStackTrace();
-            line="prediction error occur";
+//            line="prediction error occur";
         }
-        System.out.println(line);
-        return line;
+//        System.out.println(line);
+        return returnData;
     }
 }

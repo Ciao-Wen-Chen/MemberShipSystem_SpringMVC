@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 @AllArgsConstructor
 public class PredictionService {
 
-    public String startPredict(PredictedData request) throws Exception{
+    public ReturnData startPredict(PredictedData request) throws Exception{
 
         var matchLevel=String.valueOf(request.getMatchLevel());
         System.out.println(matchLevel);
@@ -59,7 +59,19 @@ public class PredictionService {
             output.append(line);
             output.append('\n');
         }
-        return output.toString();
+        String [] resultList =output.toString().split("/");
+        String player1Name =resultList[resultList.length-2].split(":")[0];
+        System.out.println(player1Name);
+        String player2Name =resultList[resultList.length-1].split(":")[0].replace("\n","");
+        System.out.println(player2Name);
+        String player1Percentage =resultList[resultList.length-2].split(":")[1];
+        System.out.println(player1Percentage);
+        String player2Percentage =resultList[resultList.length-1].split(":")[1].replace("\n","");;
+        System.out.println(player2Percentage);
+
+        ReturnData returnData = new ReturnData( player1Name,player2Name,player1Percentage,player2Percentage );
+        return returnData;
+//        return output.toString();
 
     }
 }
