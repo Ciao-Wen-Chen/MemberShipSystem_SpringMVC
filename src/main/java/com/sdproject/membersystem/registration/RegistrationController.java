@@ -30,6 +30,7 @@ public class RegistrationController {
         try{
             returnS=registrationService.confirmToken(token.getMessage());
         }catch (Exception e){
+            e.printStackTrace();
             returnS="token not exist or token already confirmed before.";
         }finally {
             return new ReturnCheckedData(returnS);

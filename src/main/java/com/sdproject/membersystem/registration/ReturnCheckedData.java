@@ -10,5 +10,5 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 public class ReturnCheckedData {
-    String message;
+    private final String message;
 }
