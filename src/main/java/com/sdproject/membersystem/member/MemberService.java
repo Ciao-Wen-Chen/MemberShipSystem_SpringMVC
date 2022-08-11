@@ -3,19 +3,27 @@ package com.sdproject.membersystem.member;
 import com.sdproject.membersystem.registration.token.ConfirmationToken;
 import com.sdproject.membersystem.registration.token.ConfirmationTokenService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class MemberService implements UserDetailsService {
+@Transactional
+@Slf4j
+public class MemberService implements UserDetailsService, MemberServiceInterface{
 
     private final static String USER_NOT_FOUND_MSG=
             "User with %s%s not found";
@@ -26,8 +34,14 @@ public class MemberService implements UserDetailsService {
 
     @Override //able us to find the user by userName
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return memberRepository.findByEmail(email)
-            .orElseThrow(()-> new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG, "email" ,email)));
+//        return memberRepository.findByEmail(email)
+//            .orElseThrow(()-> new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG, "email" ,email)));
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(()-> new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG, "email" ,email)));
+        Collection<SimpleGrantedAuthority> authorities=new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(member.getMemberRole().toString()));
+        return new org.springframework.security.core.userdetails.User(member.getEmail(),member.getPassword(),authorities);
+
     }
 
     //confirm link
@@ -63,5 +77,21 @@ public class MemberService implements UserDetailsService {
 
     public int enableMember(String email) {
         return memberRepository.enableMember(email);
+    }
+
+    public Member getMember(String email){
+        log.info("Fetching user {}", email);
+        return memberRepository.findByEmail(email)
+                .orElseThrow(()-> new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG, "email" ,email)));
+    }
+    public List<Member> getMembers(){
+        log.info("Fetching users");
+        return memberRepository.findAll();
+    }
+    public void updateUserRole(String email, MemberRole memberRole){
+        log.info("updating role {} to user {}", memberRole, email);
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(()-> new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG, "email" ,email)));
+        member.setMemberRole(memberRole);
     }
 }
