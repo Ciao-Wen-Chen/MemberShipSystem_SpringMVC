@@ -1,6 +1,8 @@
 package com.sdproject.membersystem.registration.security.config;
 
 import com.sdproject.membersystem.filter.CustomAuthenticationFilter;
+import com.sdproject.membersystem.filter.CustomAuthorizationFilter;
+import com.sdproject.membersystem.member.MemberRole;
 import com.sdproject.membersystem.member.MemberService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -18,6 +21,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import static javax.swing.text.html.FormSubmitEvent.MethodType.GET;
 
 @Configuration
 @AllArgsConstructor
@@ -27,37 +33,20 @@ public class WebSecurityConfig{
 
     private final MemberService memberService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    //private final UserDetailsService userDetailsService;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().anyRequest().permitAll();
+        http.authorizeRequests().antMatchers("/login/**", "/api/token/refresh/**").permitAll();
+        http.authorizeRequests().antMatchers("/api/prediction/**").hasAnyAuthority("MEMBER_ROLE");
+        http.authorizeRequests().anyRequest().authenticated();
+        //http.authorizeRequests().antMatchers("/api/user/**").hasAnyAuthority("ADMIN");
+        //http.authorizeRequests().anyRequest().permitAll();
         http.apply(MyCustomDsl.customDsl());
-//        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-//        ApplicationContext context = http.getSharedObject(ApplicationContext.class);
-//        CustomAuthenticationFilter myFilter = context.getBean(CustomAuthenticationFilter.class);
-//        http.addFilter(myFilter);
-
-//        http.addFilter(customAuthenticationFilter(authenticationManagerBuilder));
+        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
-//        http
-//                .csrf().disable()
-//                //.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-//                .authorizeRequests()
-//                    .antMatchers("/api/**")
-//                    .permitAll()
-//                .anyRequest().authenticated().and().formLogin();
-//        return http.build();
     }
-//    @Bean
-//    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-//        return authenticationConfiguration.getAuthenticationManager();
-//    }
-//    @Bean
-//    CustomAuthenticationFilter customAuthenticationFilter(AuthenticationManagerBuilder builder) {
-//        return new CustomAuthenticationFilter(builder);
-//    }
 
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider(){
