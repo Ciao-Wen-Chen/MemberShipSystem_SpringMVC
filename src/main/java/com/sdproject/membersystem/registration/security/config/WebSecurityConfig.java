@@ -4,6 +4,7 @@ import com.sdproject.membersystem.filter.CustomAuthenticationFilter;
 import com.sdproject.membersystem.member.MemberService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,10 +33,13 @@ public class WebSecurityConfig{
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().anyRequest().permitAll();
+        http.apply(MyCustomDsl.customDsl());
+//        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+//        ApplicationContext context = http.getSharedObject(ApplicationContext.class);
+//        CustomAuthenticationFilter myFilter = context.getBean(CustomAuthenticationFilter.class);
+//        http.addFilter(myFilter);
 
-        AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
-        http.addFilter(new CustomAuthenticationFilter(authenticationManager));
-//        http.authenticationManager(new CustomAuthenticationFilter());
+//        http.addFilter(customAuthenticationFilter(authenticationManagerBuilder));
         return http.build();
 //        http
 //                .csrf().disable()
@@ -50,15 +54,10 @@ public class WebSecurityConfig{
 //    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
 //        return authenticationConfiguration.getAuthenticationManager();
 //    }
-    @Autowired
-    void registerProvider(AuthenticationManagerBuilder builder) {
-        builder.authenticationProvider(new CustomAuthenticationFilter(authenticationManager));
-    }
-    @Bean
-    CustomAuthenticationFilter customAuthenticationFilter(AuthenticationManagerBuilder builder) {
-        return new CustomAuthenticationFilter(builder);
-    }
-
+//    @Bean
+//    CustomAuthenticationFilter customAuthenticationFilter(AuthenticationManagerBuilder builder) {
+//        return new CustomAuthenticationFilter(builder);
+//    }
 
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider(){
@@ -70,3 +69,4 @@ public class WebSecurityConfig{
     }
 
 }
+
