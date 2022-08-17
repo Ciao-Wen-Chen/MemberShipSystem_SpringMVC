@@ -44,20 +44,17 @@ public class WebSecurityConfig{
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
         http.csrf().disable();
-
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         //http.authorizeRequests().antMatchers("/api/login/**", "/api/token/refresh/**").permitAll();
         //http.authorizeRequests().antMatchers("/api/prediction/**").hasAnyAuthority("MEMBER_ROLE");
         //http.authorizeRequests().antMatchers("/api/**").permitAll();
         //http.authorizeRequests().anyRequest().authenticated();
-        //http.authorizeRequests().antMatchers("/api/user/**").hasAnyAuthority("ADMIN");
-        http.authorizeRequests().anyRequest().permitAll();
-        http.apply(MyCustomDsl.customDsl());
-        //http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
-        //http.addFilter(new CorsFilter());
 
+        http.authorizeRequests().anyRequest().permitAll();
+        http.apply(MyCustomDsl.customDsl()); //authentication
+        //http.addFilter(new CustomAuthorizationFilter());
+        //http.addFilter(new CorsFilter());
         return http.build();
     }
 

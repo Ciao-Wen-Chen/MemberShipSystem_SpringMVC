@@ -3,6 +3,7 @@ package com.sdproject.membersystem.filter;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,6 +14,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -44,13 +46,14 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+
         String email=request.getParameter("email");
         String password=request.getParameter("password");
+
         log.info("User email is {}", email);
         log.info("Password is {}", password);
 
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(email, password);
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
         return authenticationManager.authenticate(authenticationToken);
     }
 
@@ -77,6 +80,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
 //        response.setHeader("access_token", access_token);
 //        response.setHeader("refresh_token", refresh_token);
+//        log.info("access_token is {}", access_token);
         Map<String, String> tokens=new HashMap<>();
         tokens.put("access_token", access_token);
         tokens.put("refresh_token", refresh_token);
@@ -86,4 +90,11 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
 
     }
+}
+
+@Data
+class LoginForm{
+    String email;
+    String password;
+
 }
