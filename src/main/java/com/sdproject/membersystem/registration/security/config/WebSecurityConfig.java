@@ -1,5 +1,6 @@
 package com.sdproject.membersystem.registration.security.config;
 
+import com.sdproject.membersystem.filter.CorsFilter;
 import com.sdproject.membersystem.filter.CustomAuthenticationFilter;
 import com.sdproject.membersystem.filter.CustomAuthorizationFilter;
 import com.sdproject.membersystem.member.MemberRole;
@@ -22,6 +23,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import javax.servlet.Filter;
+import java.util.Arrays;
 
 import static javax.swing.text.html.FormSubmitEvent.MethodType.GET;
 
@@ -36,17 +44,32 @@ public class WebSecurityConfig{
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
         http.csrf().disable();
+
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers("/login/**", "/api/token/refresh/**").permitAll();
-        http.authorizeRequests().antMatchers("/api/prediction/**").hasAnyAuthority("MEMBER_ROLE");
-        http.authorizeRequests().anyRequest().authenticated();
+        //http.authorizeRequests().antMatchers("/api/login/**", "/api/token/refresh/**").permitAll();
+        //http.authorizeRequests().antMatchers("/api/prediction/**").hasAnyAuthority("MEMBER_ROLE");
+        //http.authorizeRequests().antMatchers("/api/**").permitAll();
+        //http.authorizeRequests().anyRequest().authenticated();
         //http.authorizeRequests().antMatchers("/api/user/**").hasAnyAuthority("ADMIN");
-        //http.authorizeRequests().anyRequest().permitAll();
+        http.authorizeRequests().anyRequest().permitAll();
         http.apply(MyCustomDsl.customDsl());
-        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        //http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        //http.addFilter(new CorsFilter());
+
         return http.build();
     }
+
+//    @Bean
+//    CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+//        configuration.setAllowedMethods(Arrays.asList("GET","POST"));
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
 
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider(){
