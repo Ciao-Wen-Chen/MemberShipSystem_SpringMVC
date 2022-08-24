@@ -38,8 +38,8 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         if(request.getServletPath().equals("/api/login")||request.getServletPath().equals("/api/token/refresh")){
             filterChain.doFilter(request,response); //just let this pass to the next filter
         } else {
-            String authorizationHeader = request.getHeader(AUTHORIZATION);
-            if(authorizationHeader!=null && authorizationHeader.startsWith("Bearer ")){ //if they have token
+            String authorizationHeader = request.getHeader(AUTHORIZATION); //key=AUTHORIZATION
+            if(authorizationHeader!=null && authorizationHeader.startsWith("Bearer ")){ //if the header existed and the header contains the header start with bear
                 try {
                     String token = authorizationHeader.substring("Bearer ".length());
                     Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());

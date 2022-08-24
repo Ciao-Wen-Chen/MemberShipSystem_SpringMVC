@@ -59,7 +59,7 @@ def main(argv):
     points_p1 = int(argv[arg_dict['p1Point']])
     hand_p1 = argv[arg_dict['p1Hand']]
     height_p1 = int(argv[arg_dict['p1Height']])
-    fatigue_p1 = int(argv[arg_dict['p1Fatigue']])
+    fatigue_p1 = int(argv[arg_dict['p1Fatigue']]) #here
     age_p1 = int(argv[arg_dict['p1Age']])
 
     percentages_p1 = retrieve_percentages(id_p1, surface)
@@ -78,7 +78,7 @@ def main(argv):
     rank_p2 = int(argv[arg_dict['p2Rank']])
     points_p2 = int(argv[arg_dict['p2Point']])
     hand_p2 = argv[arg_dict['p2Hand']]
-    height_p2 = int(argv[arg_dict['p2Height']])
+    height_p2 = int(argv[arg_dict['p2Height']]) #here
     fatigue_p2 = int(argv[arg_dict['p2Fatigue']])
     age_p2 = int(argv[arg_dict['p2Age']])
 

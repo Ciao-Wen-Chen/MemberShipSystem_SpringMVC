@@ -8,6 +8,8 @@ class MembersystemApplicationTests {
 
 	@Test
 	void contextLoads() {
+
+		//assertThat(xx).isEqualTo(yy)
 	}
 
 }

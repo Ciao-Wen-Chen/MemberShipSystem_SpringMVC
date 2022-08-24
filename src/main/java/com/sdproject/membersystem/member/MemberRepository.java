@@ -19,5 +19,11 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("UPDATE Member a " +
             "SET a.enabled = TRUE WHERE a.email = ?1")
     int enableMember(String email);
+
+//    @Transactional
+//    @Query("SELECT enabled e " +
+//            "FROM member " +
+//            "where email=?1")
+//    int getIfEnable(String email);
 }
 
