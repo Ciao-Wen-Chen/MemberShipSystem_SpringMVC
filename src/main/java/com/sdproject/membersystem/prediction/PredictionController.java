@@ -23,7 +23,12 @@ public class PredictionController {
 //        String line="";
         ReturnData returnData=new ReturnData(null,null,null,null);
         try{
+            long startTime = System.currentTimeMillis();
+            System.out.println("Start time: " + startTime);
             returnData=predictionService.startPredict(request);
+            long endTime = System.currentTimeMillis();
+            System.out.println("End time: " + endTime);
+            System.out.println("Taken time: " + (endTime - startTime) + " milliseconds");
         } catch (Exception e){
             e.printStackTrace();
 //            line="prediction error occur";
